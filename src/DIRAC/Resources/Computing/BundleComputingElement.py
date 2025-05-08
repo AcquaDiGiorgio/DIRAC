@@ -9,7 +9,7 @@ Below, you can find a list of parameters specific to the BundleCE.
 
 ExecTemplate:
     Name of the execution template to be used to bundle the jobs.
-    This template will the one that be passed to the CE to be executed alongside 
+    This template will the one that be passed to the CE to be executed alongside
         each jobExecutable file and input as the inputs of the template.
 
 InnerCEType:
@@ -17,7 +17,7 @@ InnerCEType:
 
 **CE Configuration**
 
-This CE must be configure in the same way as the one that will execute the jobs, the only 
+This CE must be configure in the same way as the one that will execute the jobs, the only
 difference is that the CEType will become InnerCEType and it must have configured the template
 to be used.
 
@@ -49,7 +49,7 @@ CEs
     host
     {
         CEType = BUNDLE
-        InnserCEType = SSH
+        InnerCEType = SSH
         ExecTemplate = BASH
 
         SSHHost = host
@@ -85,7 +85,7 @@ class BundleComputingElement(ComputingElement):
         self.mandatoryParameters = ["ExecTemplate", "InnerCEType"]
 
         self.innerCE = None
-        
+
         self.bundler = BundlerClient()
         self.ceFactory = ComputingElementFactory()
 
@@ -102,9 +102,9 @@ class BundleComputingElement(ComputingElement):
         self.innerCE = self.ceFactory.getCE(ceType=innerCEType, ceParametersDict=innerCEParams)
 
     def submitJob(self, executableFiles, proxy=None, numberOfProcessors=1, inputs=None):
-        # Create a unique ID that cannot clash with other BundleCEs and Jobs in the database 
+        # Create a unique ID that cannot clash with other BundleCEs and Jobs in the database
         jobId = f"BUNDLE_{self.ceUniqueID}_{uuid.uuid4()}"
-        
+
         # Store the job in a bundle using the ceDict of the InnerCE (containing the template)
         ceDict = self.innerCE.getDescription()
         result = self.bundler.storeInBundle(jobId, executableFiles, inputs, proxy, numberOfProcessors, ceDict)
@@ -127,7 +127,7 @@ class BundleComputingElement(ComputingElement):
 
         # Return the id of the job (NOT THE BUNDLE)
         return S_OK([jobId])
-    
+
     def getJobOutput(self, jobIDList):
         resultDict = {}
 
@@ -153,8 +153,8 @@ class BundleComputingElement(ComputingElement):
         for jobId in jobIDList:
             resultDict[jobId] = S_ERROR("Bundled jobs cannot be killed at the moment")
 
-        return resultDict 
-    
+        return resultDict
+
     def getDescription(self):
         return self.innerCE.getDescription()
 
