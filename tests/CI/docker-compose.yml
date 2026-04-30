@@ -321,7 +321,7 @@ services:
       - diracx-cs-store:/cs_store/
       - diracx-key-store:/keystore/
     entrypoint: |
-      /entrypoint.sh bash -xc 'uvicorn --factory diracx.routers:create_app --host=0.0.0.0'
+      /entrypoint.sh bash -xc 'uvicorn --factory diracx.routers.factory:create_app --host=0.0.0.0'
 
     healthcheck:
       test:
